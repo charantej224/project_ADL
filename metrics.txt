@@ -1,0 +1,37 @@
+Naive Bayes :
+Department Classification:
+20% test
+80% train
+0.8589743589743589
+
+Problem Classification:
+20% test
+80% train
+0.8146609488072902
+
+k-means classification:
+Department Classification:
+20% test
+80% train
+0.850844277673546
+
+Problem Classification:
+20% test
+80% train
+0.8291342803537926
+
+
+SVM
+department_classification
+0.9377736085053158
+
+Problem classification:
+0.9296435272045028
+
+decision-tree
+
+Problem classification:
+0.4466630930045564
+
+department_classification
+0.629500580720093
