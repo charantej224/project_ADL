@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import json
 
-root_dir = "/home/charan/Documents/workspaces/python_workspaces/Data/ADL_Project"
+root_dir = "/home/charan/Documents/workspaces/python_workspaces/Data/ADL_Project/"
 final_output = "final_df_description.csv"
 source_file = "Source_09_29_2020.csv"
 merged_file = os.path.join(root_dir, "merged_source.csv")

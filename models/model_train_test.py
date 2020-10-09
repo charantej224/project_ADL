@@ -9,8 +9,8 @@ import time
 device = 'cuda' if cuda.is_available() else 'cpu'
 
 
-def setup_model():
-    bert_model = BERTClass()
+def setup_model(number_of_classes):
+    bert_model = BERTClass(number_of_classes=number_of_classes)
     bert_model.to(device)
     return bert_model
 
@@ -48,9 +48,9 @@ def train(epoch, training_loader, model, optimizer, model_directory):
         optimizer.step()
         counter = counter + len(data)
         if counter % 100 == 0:
-            print(f" currently executing {counter} / {total}")
+            print(f" Epoch - {epoch} - current training {counter} / {total}")
 
-    torch.save(model.state_dict(), model_directory + str(epoch) + ".pt")
+    torch.save(model.state_dict(), model_directory + '_' + str(epoch) + ".pt")
     done = time.time()
     elapsed = (done - start) / 60
     return train_targets, train_outputs, elapsed
@@ -75,14 +75,14 @@ def validation(epoch, testing_loader, model):
             validation_outputs = np.append(validation_outputs, np.argmax(outputs.cpu().numpy(), axis=1))
             counter = counter + len(data)
             if counter % 100 == 0:
-                print(f" currently executing {counter} / {total}")
+                print(f" Epoch - {epoch} - current Inference {counter} / {total}")
     done = time.time()
     elapsed = (done - start) / 60
     return validation_targets, validation_outputs, elapsed
 
 
-def start_epochs(training_loader, testing_loader, metrics_json, model_directory, epochs=3):
-    model = setup_model()
+def start_epochs(training_loader, testing_loader, metrics_json, model_directory, epochs=3, number_of_classes=16):
+    model = setup_model(number_of_classes)
     optimizer = get_optimizer(model)
     accuracy_map = {}
     for epoch in range(epochs):

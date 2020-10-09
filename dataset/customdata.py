@@ -4,11 +4,12 @@ import torch
 
 class CustomDataset(Dataset):
 
-    def __init__(self, dataframe, tokenizer, max_len):
+    def __init__(self, dataframe, tokenizer, max_len, number_of_classes):
         self.tokenizer = tokenizer
         self.features = dataframe.desc
         self.labels = dataframe.label
         self.max_len = max_len
+        self.number_of_classes = number_of_classes
 
     def __len__(self):
         return len(self.features)
@@ -30,7 +31,7 @@ class CustomDataset(Dataset):
         mask = inputs['attention_mask']
         token_type_ids = inputs["token_type_ids"]
 
-        targets = torch.zeros(16)
+        targets = torch.zeros(self.number_of_classes)
         targets[self.labels[index]] = 1
 
         return {

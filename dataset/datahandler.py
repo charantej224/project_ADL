@@ -14,7 +14,7 @@ LEARNING_RATE = 1e-05
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 
-def load_datasets(classification_dataframe, train_size=0.8):
+def load_datasets(classification_dataframe, train_size=0.8, number_of_classes=16):
     train_dataset = classification_dataframe.sample(frac=train_size, random_state=200)
     test_dataset = classification_dataframe.drop(train_dataset.index).reset_index(drop=True)
     train_dataset = train_dataset.reset_index(drop=True)
@@ -23,8 +23,8 @@ def load_datasets(classification_dataframe, train_size=0.8):
     print("TRAIN Dataset: {}".format(train_dataset.shape))
     print("TEST Dataset: {}".format(test_dataset.shape))
 
-    training_set = CustomDataset(train_dataset, tokenizer, MAX_LEN)
-    testing_set = CustomDataset(test_dataset, tokenizer, MAX_LEN)
+    training_set = CustomDataset(train_dataset, tokenizer, MAX_LEN, number_of_classes)
+    testing_set = CustomDataset(test_dataset, tokenizer, MAX_LEN, number_of_classes)
 
     train_params = {'batch_size': TRAIN_BATCH_SIZE,
                     'shuffle': True,
