@@ -27,7 +27,7 @@ def get_values(input_metrics, plot_title, file_name):
     for i in range(10):
         train_accuracy.append(metrics_dict['train_accuracy_' + str(i)])
         validation_accuracy.append(metrics_dict['val_accuracy_' + str(i)])
-    plot_accuracy(train_accuracy, validation_accuracy, 'Accuracy', 'Epoch', plot_title, file_name)
+    plot_accuracy(train_accuracy, validation_accuracy, 'Epoch', 'Accuracy', plot_title, file_name)
 
 
 if __name__ == '__main__':
