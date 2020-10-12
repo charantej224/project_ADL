@@ -28,6 +28,7 @@ def loss_fn(outputs, targets):
 def train(epoch, training_loader, model, optimizer, model_directory):
     start = time.time()
     model.train()
+    unique_ids = np.array([])
     train_targets = np.array([])
     train_outputs = np.array([])
     counter = 0
@@ -42,6 +43,7 @@ def train(epoch, training_loader, model, optimizer, model_directory):
         loss = loss_fn(outputs, targets)
         train_targets = np.append(train_targets, np.argmax(targets.cpu().detach().numpy(), axis=1))
         train_outputs = np.append(train_outputs, np.argmax(outputs.cpu().detach().numpy(), axis=1))
+        unique_ids = np.append(unique_ids, data['u_id'])
         print(f'Epoch: {epoch}, Loss:  {loss.item()}')
         optimizer.zero_grad()
         loss.backward()
@@ -53,7 +55,7 @@ def train(epoch, training_loader, model, optimizer, model_directory):
     torch.save(model.state_dict(), model_directory + '_' + str(epoch) + ".pt")
     done = time.time()
     elapsed = (done - start) / 60
-    return train_targets, train_outputs, elapsed
+    return unique_ids, train_targets, train_outputs, elapsed
 
 
 def validation(epoch, testing_loader, model):
@@ -88,7 +90,8 @@ def start_epochs(training_loader, testing_loader, metrics_json, model_directory,
     optimizer = get_optimizer(model)
     accuracy_map = {}
     for epoch in range(epochs):
-        train_targets, train_outputs, train_time = train(epoch, training_loader, model, optimizer, model_directory)
+        unique_ids, train_targets, train_outputs, train_time = train(epoch, training_loader, model, optimizer,
+                                                                     model_directory)
         train_accuracy = accuracy_score(train_targets, train_outputs) * 100
         print('Epoch {} - accuracy {}'.format(epoch, train_accuracy))
         unique_ids, val_targets, val_outputs, inference_time = validation(epoch, testing_loader, model)
