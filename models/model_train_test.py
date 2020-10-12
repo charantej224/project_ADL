@@ -61,6 +61,7 @@ def validation(epoch, testing_loader, model):
     model.eval()
     validation_targets = np.array([])
     validation_outputs = np.array([])
+    unique_ids = np.array([])
     print(f'Epoch - Inference : {epoch}')
     counter = 0
     total = len(testing_loader)
@@ -73,12 +74,13 @@ def validation(epoch, testing_loader, model):
             outputs = model(ids, mask, token_type_ids)
             validation_targets = np.append(validation_targets, np.argmax(targets.cpu().numpy(), axis=1))
             validation_outputs = np.append(validation_outputs, np.argmax(outputs.cpu().numpy(), axis=1))
+            unique_ids = np.append(unique_ids, data['u_id'])
             counter = counter + len(data)
             if counter % 100 == 0:
                 print(f" Epoch - {epoch} - current Inference {counter} / {total}")
     done = time.time()
     elapsed = (done - start) / 60
-    return validation_targets, validation_outputs, elapsed
+    return unique_ids, validation_targets, validation_outputs, elapsed
 
 
 def start_epochs(training_loader, testing_loader, metrics_json, model_directory, epochs=3, number_of_classes=16):
@@ -89,7 +91,7 @@ def start_epochs(training_loader, testing_loader, metrics_json, model_directory,
         train_targets, train_outputs, train_time = train(epoch, training_loader, model, optimizer, model_directory)
         train_accuracy = accuracy_score(train_targets, train_outputs) * 100
         print('Epoch {} - accuracy {}'.format(epoch, train_accuracy))
-        val_targets, val_outputs, inference_time = validation(epoch, testing_loader, model)
+        unique_ids, val_targets, val_outputs, inference_time = validation(epoch, testing_loader, model)
         validation_accuracy = accuracy_score(val_targets, val_outputs) * 100
         print('Epoch {} - accuracy {}'.format(epoch, validation_accuracy))
         accuracy_map["train_accuracy_" + str(epoch)] = train_accuracy
@@ -102,9 +104,10 @@ def start_epochs(training_loader, testing_loader, metrics_json, model_directory,
         f.close()
 
 
-def load_model(model_file, testing_loader, training_loader):
-    model = setup_model()
+def load_model(model_file, testing_loader, number_of_classes):
+    model = setup_model(number_of_classes)
     model.load_state_dict(torch.load(model_file))
-    val_targets, val_outputs, inference_time = validation(1, testing_loader, model)
+    unique_ids, val_targets, val_outputs, inference_time = validation(1, testing_loader, model)
     validation_accuracy = accuracy_score(val_targets, val_outputs) * 100
     print('Epoch {} - accuracy {} - Inference time {} '.format(1, validation_accuracy, inference_time))
+    return unique_ids, val_outputs

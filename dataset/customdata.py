@@ -8,6 +8,7 @@ class CustomDataset(Dataset):
         self.tokenizer = tokenizer
         self.features = dataframe.desc
         self.labels = dataframe.label
+        self.unique_ids = dataframe.u_id
         self.max_len = max_len
         self.number_of_classes = number_of_classes
 
@@ -38,5 +39,6 @@ class CustomDataset(Dataset):
             'ids': torch.tensor(ids, dtype=torch.long),
             'mask': torch.tensor(mask, dtype=torch.long),
             'token_type_ids': torch.tensor(token_type_ids, dtype=torch.long),
-            'targets': targets
+            'targets': targets,
+            'u_id': self.unique_ids[index]
         }
