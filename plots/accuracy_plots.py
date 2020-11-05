@@ -3,8 +3,8 @@ import os
 import json
 
 root_dir = "/home/charan/Documents/workspaces/python_workspaces/Data/ADL_Project"
-department_metrics = os.path.join(root_dir, "dept_classification/dept_metric.json")
-problem_metrics = os.path.join(root_dir, "problem_classification/prob_metric.json")
+department_metrics = os.path.join(root_dir, "dept/dept_metric.json")
+problem_metrics = os.path.join(root_dir, "problem/prob_metric.json")
 
 
 def plot_accuracy(values1, values2, x_label, y_label, plot_title, file_name):
