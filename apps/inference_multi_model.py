@@ -7,7 +7,7 @@ import numpy as np
 
 root_dir = "/home/charan/Documents/workspaces/python_workspaces/Data/ADL_Project/"
 dept_category = os.path.join(root_dir, "dept_classification/category.json")
-prob_category = os.path.join(root_dir, "problem_classification/tweaked_category.json")
+prob_category = os.path.join(root_dir, "problem_classification/Problem_category.json")
 prob_map_category = os.path.join(root_dir, "problem_classification/new_category.json")
 generated_final_predictions = os.path.join(root_dir, "prediction_final.csv")
 
@@ -35,7 +35,34 @@ def apply_prob(input_text):
     return list(prob_category.values()).index(category)
 
 
-if __name__ == '__main__':
+def new_inference():
+    final = os.path.join(root_dir, "final_data/311_Cases_master_with_desc.csv")
+    final_data = pd.read_csv(final)
+    department_df = final_data[['CASE ID', 'DESCRIPTION', 'DEPARTMENT']]
+    problem_df = final_data[['CASE ID', 'DESCRIPTION', 'REQUEST TYPE']]
+    department_df['label'] = department_df['DEPARTMENT'].apply(apply_dept)
+    problem_df['label'] = problem_df['REQUEST TYPE'].apply(apply_prob)
+    department_df.rename(columns={"CASE ID": "u_id", "DESCRIPTION": "desc"}, inplace=True)
+    problem_df.rename(columns={"CASE ID": "u_id", "DESCRIPTION": "desc"}, inplace=True)
+    department_df.drop(columns=['DEPARTMENT'], inplace=True)
+    problem_df.drop(columns=['REQUEST TYPE'], inplace=True)
+    dept_classes = len(list(pd.read_csv(department_df)['label'].unique()))
+    prob_classes = len(list(pd.read_csv(problem_df)['label'].unique()))
+    dept_test_loader = load_test_datasets(department_df, dept_classes)
+    prob_test_loader = load_test_datasets(problem_df, prob_classes)
+    load_dept_model_path = os.path.join(root_dir, 'dept_classification/dept_state_dict_9.pt')
+    load_prob_model_path = os.path.join(root_dir, 'problem_classification/prob_state_dict_9.pt')
+    unique_ids, predictions = load_model(load_dept_model_path, dept_test_loader, dept_classes)
+    out_numpy = np.concatenate((unique_ids.reshape(-1, 1), predictions.reshape(-1, 1)), axis=1)
+    dept_df = pd.DataFrame(out_numpy, columns=['CASE ID', 'DEPT_LABEL'])
+    dept_df.to_csv(os.path.join(root_dir, "dept_df.csv"), index=False, header=True)
+    unique_ids, predictions = load_model(load_prob_model_path, prob_test_loader, prob_classes)
+    out_numpy = np.concatenate((unique_ids.reshape(-1, 1), predictions.reshape(-1, 1)), axis=1)
+    prob_df = pd.DataFrame(out_numpy, columns=['CASE ID', 'PROB_LABEL'])
+    prob_df.to_csv(os.path.join(root_dir, "prob_df.csv"), index=False, header=True)
+
+
+def inference_run():
     root_dir = "/home/charan/Documents/workspaces/python_workspaces/Data/ADL_Project/"
     dept_classification = os.path.join(root_dir, "dept_classification/dept_classification.csv")
     prob_classification = os.path.join(root_dir, "problem_classification/problem_classification.csv")
@@ -79,3 +106,7 @@ if __name__ == '__main__':
     #
     # load_model_path = os.path.join(prob_root_dir, 'prob_state_dict_9.pt')
     # load_model(load_model_path, training_loader, testing_loader)
+
+
+if __name__ == '__main__':
+    new_inference()
