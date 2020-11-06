@@ -1,0 +1,66 @@
+{
+  "Aviation": {
+    "MAE": 33.74591526129575,
+    "MAPE": Infinity
+  },
+  "City Managers Office": {
+    "MAE": 15.213405876193125,
+    "MAPE": Infinity
+  },
+  "City Planning and Development": {
+    "MAE": 133.594871487672,
+    "MAPE": Infinity
+  },
+  "Convention and Entertainment Center": {
+    "MAE": 39.65082839328695,
+    "MAPE": Infinity
+  },
+  "Finance": {
+    "MAE": 18.550549619193905,
+    "MAPE": Infinity
+  },
+  "Fire": {
+    "MAE": 9.30546628856719,
+    "MAPE": Infinity
+  },
+  "General Service": {
+    "MAE": 80.84034410683832,
+    "MAPE": Infinity
+  },
+  "Health": {
+    "MAE": 11.143235036698377,
+    "MAPE": Infinity
+  },
+  "KCPD": {
+    "MAE": 2.215785048349615,
+    "MAPE": Infinity
+  },
+  "NHS": {
+    "MAE": 62.20321055402402,
+    "MAPE": Infinity
+  },
+  "Northeast": {
+    "MAE": 12.045208847582552,
+    "MAPE": Infinity
+  },
+  "Northland": {
+    "MAE": 16.88774611116107,
+    "MAPE": Infinity
+  },
+  "Parks and Rec": {
+    "MAE": 12.419931324923644,
+    "MAPE": Infinity
+  },
+  "Public Works": {
+    "MAE": 18.8316724365623,
+    "MAPE": Infinity
+  },
+  "South": {
+    "MAE": 40.30138831179707,
+    "MAPE": Infinity
+  },
+  "Water Services": {
+    "MAE": 15.162346080964952,
+    "MAPE": Infinity
+  }
+}
