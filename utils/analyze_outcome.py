@@ -5,6 +5,7 @@ from utils.json_utils import read_json
 root_dir = "/home/charan/Documents/workspaces/python_workspaces/Data/ADL_Project"
 problem_file = os.path.join(root_dir, "problem/prob_df.csv")
 dept_file = os.path.join(root_dir, "dept/dept_df.csv")
+time_series_file = os.path.join(root_dir, "time-series/final_val.csv")
 merged_file = os.path.join(root_dir, "merged_prediction.csv")
 dept_category_file = os.path.join(root_dir, "dept/dept_category.json")
 prob_category_file = os.path.join(root_dir, "problem/prob_category.json")
@@ -40,6 +41,14 @@ def analyze_predictions():
     new_master.to_csv(master_dataframe_file_pred, header=True, index=False)
 
 
+def merge_time_series():
+    final_df = pd.read_csv(master_dataframe_file_pred)
+    time_series_df = pd.read_csv(time_series_file)
+    time_series_df.drop(columns=['ds', 'y'], inplace=True)
+    final_df = final_df.merge(time_series_df, on='CASE ID')
+    final_df.to_csv(master_dataframe_file_pred, header=True, index=False)
+
+
 if __name__ == '__main__':
-    merge_predictions()
-    analyze_predictions()
+    final_df = pd.read_csv(master_dataframe_file_pred)
+    print(final_df.shape)
