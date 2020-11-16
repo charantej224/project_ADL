@@ -8,8 +8,10 @@ dept_file = os.path.join(root_dir, "dept/dept_classification_df.csv")
 final_df = os.path.join(root_dir, "final_data/311_Cases_master_with_desc.csv")
 dept_json = os.path.join(root_dir, "dept/dept_category.json")
 prob_json = os.path.join(root_dir, "problem/prob_category.json")
-map_prob_json = os.path.join(root_dir, "problem/new_category.json") ## Used for mapping to parent category.
+map_prob_json = os.path.join(root_dir, "problem/new_category.json")  ## Used for mapping to parent category.
 map_prob_json = read_json(map_prob_json)
+master_dataframe_file_pred = os.path.join(root_dir, "final_data/Data_with_no_desc.csv")
+timeseries_data = os.path.join(root_dir, 'time-series/time_series.csv')
 
 final_data = pd.read_csv(final_df)
 
@@ -28,7 +30,7 @@ def apply_prob_label(input_string):
 def apply_prob(input_text):
     category = input_text.split("-")[0]
     category = category.split("/")[0].strip()
-    category = map_prob_json[category]
+    # category = map_prob_json[category]
     return category
 
 
@@ -65,6 +67,12 @@ def process_prob_df():
     print('finished')
 
 
+def process_timeseries():
+    actual_df = pd.read_csv(master_dataframe_file_pred)
+    actual_df['PROB_LABEL'] = actual_df['REQUEST TYPE'].apply(apply_prob)
+    timeseries_df = actual_df[['CASE ID', 'CREATION DATE', 'DEPARTMENT', 'PROB_LABEL', 'DAYS TO CLOSE']]
+    timeseries_df.to_csv(timeseries_data, header=True, index=False)
+
+
 if __name__ == '__main__':
-    process_dept_df()
-    process_prob_df()
+    process_timeseries()

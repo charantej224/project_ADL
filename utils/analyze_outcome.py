@@ -49,6 +49,10 @@ def merge_time_series():
     final_df.to_csv(master_dataframe_file_pred, header=True, index=False)
 
 
+def analyze_final():
+    final_merged_df = pd.read_csv(master_dataframe_file_pred)
+    print(len(list(final_merged_df.DESCRIPTION.unique())))
+
+
 if __name__ == '__main__':
-    final_df = pd.read_csv(master_dataframe_file_pred)
-    print(final_df.shape)
+    analyze_final()
