@@ -71,6 +71,9 @@ def process_timeseries():
     actual_df = pd.read_csv(master_dataframe_file_pred)
     actual_df['PROB_LABEL'] = actual_df['REQUEST TYPE'].apply(apply_prob)
     timeseries_df = actual_df[['CASE ID', 'CREATION DATE', 'DEPARTMENT', 'PROB_LABEL', 'DAYS TO CLOSE']]
+    timeseries_df = timeseries_df.dropna()
+    timeseries_df['DAYS TO CLOSE'] = timeseries_df['DAYS TO CLOSE'].apply(lambda x: str(x).replace(",", ""))
+    timeseries_df['DAYS TO CLOSE'] = timeseries_df['DAYS TO CLOSE'].astype("float64")
     timeseries_df.to_csv(timeseries_data, header=True, index=False)
 
 
