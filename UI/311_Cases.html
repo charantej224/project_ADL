@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>311</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<style>
+		iframe{
+			border:none;
+		}
+		
+		.bg-dark  {
+			background-color: black !important;
+		}
+		
+		.container {
+			margin-top: 25px;
+		}
+		
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		#map {
+			width: 100%;
+			height: 100%;
+		}
+	
+		.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+		.legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+		.table-scrollable {
+			/* set the height to enable overflow of the table */
+			min-height: 260px;
+			max-height: 260px;
+			
+			overflow-x: auto;
+			overflow-y: auto;
+			scrollbar-width: none;
+		}
+		
+		.table-scrollable::-webkit-scrollbar {
+		  display: none;
+		}
+
+		.table-scrollable thead th {
+			border: none;
+		}
+
+		.table-scrollable thead th {
+			/* Set header to stick to the top of the container. */
+			position: sticky; 
+			top: 0px;
+			
+			/* This is needed otherwise the sticky header will be transparent 
+			*/
+			background-color: white;
+
+			/* Because bootstrap adds `border-collapse: collapse` to the
+			 * table, the header boarders aren't sticky.
+			 * So, we need to make some adjustments to cover up the actual
+			 * header borders and created fake borders instead
+			 */
+			margin-top: -1px;
+			margin-bottom: -1px;
+
+			/* This is our fake border (see above comment) */
+			box-shadow: inset 0 1px 0 #dee2e6,
+						inset 0 -1px 0 #dee2e6;
+		}
+	</style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+       <a class="navbar-brand" href="file:///C:/Users/Sri/Documents/UMKC/Research/OCEL/311/311_cases.html">311</a>
+       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+       <span class="navbar-toggler-icon"></span>
+       </button>
+       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+             <li class="nav-item active">
+                <a class="nav-link" href="file:///C:/Users/Sri/Documents/UMKC/Research/Hackathon/ALITA_Student.html">Home <span class="sr-only">(current)</span></a>
+             </li>
+			 <li class="nav-item">
+                <a class="nav-link" href="file:///C:/Users/Sri/Documents/UMKC/Research/Hackathon/results.html">Tools</a>
+             </li>
+             <li class="nav-item">
+                <a class="nav-link" href="file:///C:/Users/Sri/Documents/UMKC/Research/Hackathon/CS61/hackaroo/cs61a.org/schedule.html">Publications</a>
+             </li>
+             <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                More
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                   <a class="dropdown-item" href="http://localhost:5000/cal/cs61a/sp16/scheme/" target="_blank">Contributors</a>
+                   <a class="dropdown-item" href="#">About Us</a>
+                   <div class="dropdown-divider"></div>
+                   <a class="dropdown-item" href="#">Contact</a>
+                </div>
+             </li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+             <button class="btn btn-outline-success my-2 my-sm-0">Search</button>
+          </form>
+       </div>
+    </nav>
+
+    <div class="container">
+       
+       <div class="row">
+          <div class="col-md-8">
+             <div id='map'></div>
+          </div>
+          <div class="col-md-4">
+             <div class="card">
+                <div class="card-body">
+                   <h5 class="card-title">No. of cases</h5>
+                   <h6 class="card-subtitle mb-2 text-muted">by Category</h6>
+                   <div id="categories" style="height: 250px; width: 100%;">Choose a Zip Code</div>
+                </div>
+             </div>
+             <br>
+            <div class="dashboard-container card">
+				<!-- <div class="card-header">
+					Cases
+				</div> -->	
+			  
+				<div class="table-scrollable">
+				  <table class="table table-hover table-sortable" id="cases">
+					  <thead>
+						  <tr>
+							  <th data-sort-type="text">CaseID</th>
+							  <th data-sort-type="text">Description</th>
+						  </tr>
+					  </thead>
+					  <tbody>
+						<tr>
+						  <td><a href='#'>20#########</a></td>
+						  <td>Choose a Zip Code</td>
+						</tr>
+				  </table>
+				</div>
+			</div>
+          </div>
+       </div>
+	   <hr>
+	    <div class="row">
+			<div class="col-md-8">
+				<div class="card">
+					<div class="card-header">
+					   Moving Time Analysis
+					</div>
+					<div id="timeSeries" style="height: 250px; width: 100%;"></div>
+				 </div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-header">
+					   Predictions
+					</div>
+					<div id="predictions">
+						<p>Choose a Case</p>
+						<table class="table" style="display: none">
+						  <thead>
+							  <tr>
+								  <th>Property</th>
+								  <th>Prediction</th>
+							  </tr>
+						  </thead>
+						  <tbody>
+							<tr>
+							  <td>Category</td>
+							  <td>Trash</td>
+							</tr>
+							<tr>
+							  <td>Department</td>
+							  <td>Municipality</td>
+							</tr>
+							<tr>
+							  <td>Resolution Time</td>
+							  <td>84 hrs</td>
+							</tr>
+							
+					  </table>
+				  </div>
+				</div>
+			</div>
+		</div>
+       <hr>
+       <div class="row">
+          <div class="text-center col-lg-6 offset-lg-3">
+             <h4>311 Dashboard</h4>
+             <p>Copyright &copy; 2020 &middot; All Rights Reserved &middot; <a href="https://www.umkc.edu/" >UMKC</a></p>
+          </div>
+       </div>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) --> 
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	
+    <!-- Include all compiled plugins (below), or include individual files as needed --> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	<script type="text/javascript" src="kc_ks_mo_zips.js"></script>
+	<script type="text/javascript" src="cases.js"></script>
+	<script type="text/javascript" src="categories.js"></script>
+	<script type="text/javascript" src="case_desc_10.js"></script>
+	<script type="text/javascript" src="311_dashboard.js"></script>
+	<script>
+	$(document).ready(function(){
+	  $("#qa_btn").click(function(e){
+	  e.preventDefault();
+		$("#answer").html("<br><b>Thinking...</b>");
+		setTimeout(function() {
+			$("#answer").text("The attempt to acquire sensitive information such as usernames, passwords, and credit card details directly from users by deceiving the users.");
+		}, 500);
+	  });
+	});
+	</script>
+  </body>
+</html>
