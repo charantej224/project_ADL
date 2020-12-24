@@ -52,7 +52,16 @@ def merge_time_series():
 def analyze_final():
     final_merged_df = pd.read_csv(master_dataframe_file_pred)
     print(len(list(final_merged_df.DESCRIPTION.unique())))
+    print(len(list(final_merged_df["CASE ID"].unique())))
+
+
+def final_record_analysis():
+    final_df = pd.read_csv("/home/charan/Downloads/311_Cases_master_desc_prediction_topics.csv")
+    print(final_df.shape)
+    final_df = final_df.loc[:, ~final_df.columns.str.contains('^Unnamed')]
+    # final_df['CREATION YEAR'] = final_df["CREATION DATE"].apply(lambda x: x.split("/")[2])
+    final_df.to_csv("/home/charan/Downloads/311_Cases_master_desc_prediction_topics.csv", header=True, index=False)
 
 
 if __name__ == '__main__':
-    analyze_final()
+    final_record_analysis()
